@@ -8,6 +8,7 @@ import (
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/moby/moby/api/types/image"
 	"github.com/moby/moby/client"
+	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 
 	"github.com/buildpacks/imgutil"
 )
@@ -26,7 +27,7 @@ func NewImage(repoName string, dockerClient DockerClient, ops ...imgutil.ImageOp
 		return nil, err
 	}
 
-	previousImage, err := processImageOption(options.PreviousImageRepoName, dockerClient, true)
+	previousImage, err := processImageOption(options.PreviousImageRepoName, options.Platform, dockerClient, true)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +39,7 @@ func NewImage(repoName string, dockerClient DockerClient, ops ...imgutil.ImageOp
 		baseIdentifier string
 		store          *Store
 	)
-	baseImage, err := processImageOption(options.BaseImageRepoName, dockerClient, false)
+	baseImage, err := processImageOption(options.BaseImageRepoName, options.Platform, dockerClient, false)
 	if err != nil {
 		return nil, err
 	}
@@ -96,11 +97,11 @@ type imageResult struct {
 	layerStore *Store
 }
 
-func processImageOption(repoName string, dockerClient DockerClient, downloadLayersOnAccess bool) (imageResult, error) {
+func processImageOption(repoName string, platform imgutil.Platform, dockerClient DockerClient, downloadLayersOnAccess bool) (imageResult, error) {
 	if repoName == "" {
 		return imageResult{}, nil
 	}
-	inspect, history, err := getInspectAndHistory(repoName, dockerClient)
+	inspect, history, err := getInspectAndHistory(repoName, platform, dockerClient)
 	if err != nil {
 		return imageResult{}, err
 	}
@@ -119,8 +120,13 @@ func processImageOption(repoName string, dockerClient DockerClient, downloadLaye
 	}, nil
 }
 
-func getInspectAndHistory(repoName string, dockerClient DockerClient) (*image.InspectResponse, []image.HistoryResponseItem, error) {
-	inspect, err := dockerClient.ImageInspect(context.Background(), repoName)
+func getInspectAndHistory(repoName string, platform imgutil.Platform, dockerClient DockerClient) (*image.InspectResponse, []image.HistoryResponseItem, error) {
+	inspect, err := dockerClient.ImageInspect(context.Background(), repoName, client.ImageInspectWithPlatform(&ocispec.Platform{
+		Architecture: platform.Architecture,
+		OS:           platform.OS,
+		OSVersion:    platform.OSVersion,
+		Variant:      platform.Variant,
+	}))
 	if err != nil {
 		if cerrdefs.IsNotFound(err) {
 			return nil, nil, nil

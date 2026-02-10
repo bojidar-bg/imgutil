@@ -26,6 +26,7 @@ func newV1ImageFacadeFromInspect(dockerInspect image.InspectResponse, history []
 	if err != nil {
 		return nil, err
 	}
+	println("HI from inspect", dockerInspect.Architecture)
 	configFile := &v1.ConfigFile{
 		Architecture: dockerInspect.Architecture, // FIXME: this should come from options.Platform
 		Author:       dockerInspect.Author,
