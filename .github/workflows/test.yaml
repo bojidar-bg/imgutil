@@ -28,6 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       steps:
+      - uses: actions/checkout@v4
       - name: Set up Docker with Containerd
         uses: docker/setup-docker-action@v5
         with:
@@ -37,7 +38,6 @@ jobs:
                 "containerd-snapshotter": true
               }
             }
-      - uses: actions/checkout@v4
       - name: Set up go
         uses: actions/setup-go@v5
         with:
