@@ -292,12 +292,12 @@ func testImage(t *testing.T, when spec.G, it spec.S) {
 					})
 				})
 
-				when("base image has multiple platforms available", func() {
+				platformAwareWhen := when.Pend
+				if h.DockerIsPlatformAware(t) {
+					platformAwareWhen = when
+				}
+				platformAwareWhen("base image has multiple platforms available", func() {
 					it("uses the matching platform", func() {
-						if !h.DockerIsPlatformAware(t, dockerClient) {
-							t.Fatal("Docker is not platform aware.")
-							return
-						}
 						// linux/arm64 busybox image
 						multiplatformBaseImageName := "busybox"
 						expectedArchitecture := "arm64"

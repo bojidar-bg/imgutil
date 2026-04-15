@@ -32,7 +32,6 @@ import (
 	"github.com/google/go-containerregistry/pkg/v1/types"
 	"github.com/moby/moby/api/types/jsonstream"
 	dockercli "github.com/moby/moby/client"
-	"github.com/moby/moby/client/pkg/versions"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 
@@ -196,12 +195,11 @@ func PullIfMissing(t *testing.T, docker dockercli.APIClient, ref string) {
 	AssertNil(t, err)
 }
 
-func DockerIsPlatformAware(t *testing.T, docker dockercli.APIClient) bool {
+func DockerIsPlatformAware(t *testing.T) bool {
 	t.Helper()
-	version, err := docker.ServerVersion(context.TODO(), dockercli.ServerVersionOptions{})
-	AssertNil(t, err)
+	dockerIsPlatformAware, _ := os.LookupEnv("PLATFORM_AWARE_DOCKER")
 
-	return versions.GreaterThanOrEqualTo(version.APIVersion, "1.49")
+	return dockerIsPlatformAware == "true"
 }
 
 func PullWithPlatformIfMissing(t *testing.T, docker dockercli.APIClient, ref string, platform ocispec.Platform) {
