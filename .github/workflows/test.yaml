@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - l1599-local-platform-wip
   pull_request:
     branches:
       - main
