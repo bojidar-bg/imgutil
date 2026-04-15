@@ -31,6 +31,7 @@ jobs:
       - name: Set up Docker with Containerd
         uses: docker/setup-docker-action@v5
         with:
+          set-host: true
           daemon-config: |
             {
               "features": {
