@@ -195,8 +195,7 @@ func PullIfMissing(t *testing.T, docker dockercli.APIClient, ref string) {
 	AssertNil(t, err)
 }
 
-func DockerIsPlatformAware(t *testing.T) bool {
-	t.Helper()
+func DockerIsPlatformAware() bool {
 	dockerIsPlatformAware, _ := os.LookupEnv("PLATFORM_AWARE_DOCKER")
 
 	return dockerIsPlatformAware == "true"

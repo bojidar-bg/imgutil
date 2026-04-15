@@ -293,7 +293,7 @@ func testImage(t *testing.T, when spec.G, it spec.S) {
 				})
 
 				platformAwareWhen := when.Pend
-				if h.DockerIsPlatformAware(t) {
+				if h.DockerIsPlatformAware() {
 					platformAwareWhen = when
 				}
 				platformAwareWhen("base image has multiple platforms available", func() {
