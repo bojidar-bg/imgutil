@@ -43,8 +43,6 @@ jobs:
           go-version-file: 'go.mod'
       - name: Test
         run: make test
-        env:
-          DOCKER_HOST: "tcp://127.0.0.1:2376"
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
