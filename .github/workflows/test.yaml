@@ -23,6 +23,28 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+  test-and-build-linux-dind:
+    runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:dind
+        options: --privileged
+        command: dockerd --host=tcp://0.0.0.0:2376 --tls=false
+        ports: 127.0.0.1:2376:2376
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+      - name: Test
+        run: make test
+        env:
+          DOCKER_HOST: "tcp://127.0.0.1:2376"
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
   test-and-build-windows:
     runs-on: windows-2022
     steps:
