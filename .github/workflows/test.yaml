@@ -26,8 +26,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
   test-and-build-linux-containerd:
     runs-on: ubuntu-latest
-    services:
-      steps:
+    steps:
       - uses: actions/checkout@v4
       - name: Set up Docker with Containerd
         uses: docker/setup-docker-action@v5
