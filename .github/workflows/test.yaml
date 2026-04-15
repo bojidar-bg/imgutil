@@ -31,7 +31,8 @@ jobs:
         image: docker:dind
         options: --privileged
         command: dockerd --host=tcp://0.0.0.0:2376 --tls=false
-        ports: 127.0.0.1:2376:2376
+        ports:
+          - '127.0.0.1:2376:2376'
     steps:
       - uses: actions/checkout@v4
       - name: Set up go
